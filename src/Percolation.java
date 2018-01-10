@@ -19,17 +19,17 @@ public class Percolation {
             throw new IllegalArgumentException("n " + n + " is less than 1");
 
         sites = new boolean[n * n];
-        uf = new WeightedQuickUnionUF(n * n + 2);
+        uf = new WeightedQuickUnionUF(n * n);
 
         this.n = n;
         top = 0;
-        bottom = n * n + 1;
+        bottom = n * n - 1;
 
         // IntStream.range(0, n).forEach(q -> uf.union(top, q));
-        for (int q = 1; q <= n; q++)
+        for (int q = 0; q < n; q++)
             uf.union(top, q);
         // IntStream.range(n * n - n, n * n).forEach(q -> uf.union(bottom, q));
-        for (int q = bottom - 1; q <= n * n - n; q--)
+        for (int q = bottom; q > bottom - n; q--)
             uf.union(bottom, q);
     }
 
@@ -38,27 +38,23 @@ public class Percolation {
      */
     public void open(int row, int col) {
         if (!isOpen(row, col)) {
-            int currPos = findSite(row, col);
+            int currPos = xyTo1D(row, col);
             sites[currPos] = true;
             openSites++;
 
-            int[][] positions  = {{row, col}, {row, col - 1}, {row, col + 1}, {row - 1, col}, {row + 1, col}};
-            // positions = Arrays.stream(positions).filter(p -> p >= 0 && p < sites.length).filter(p -> sites[p]).toArray();
+            int left = xyTo1D(row, col - 1);
+            int right = xyTo1D(row, col + 1);
+            int up = xyTo1D(row - 1, col);
+            int down = xyTo1D(row + 1, col);
 
-            for (int[] nextPos: positions) {
-                if (isRowOrColumnValid(nextPos, row, col)) {
-                    int nextRow = nextPos[0];
-                    int nextColumn = nextPos[1];
-                    int next = findSite(nextRow, nextColumn);
-                    if (nextRow == n)
-                        if (!percolates())
-                            uf.union(next, bottom);
-                    else if (isOpen(nextRow, nextColumn))
-                        uf.union(next, currPos);
-                    else if (!isFull(nextRow, nextColumn) && uf.connected(next, top))
-                        uf.union(next, top);
-                }
-            }
+            if (validate(row, col - 1, row, col) && sites[left]) // left
+                uf.union(currPos, left);
+            if (validate(row, col + 1, row, col) && sites[right]) // right
+                uf.union(currPos, right);
+            if (validate(row -1, col, row, col) && sites[up]) // up
+                uf.union(currPos, up);
+            if (validate(row + 1, col, row, col) && sites[down]) // down
+                uf.union(currPos, down);
         }
     }
 
@@ -66,16 +62,16 @@ public class Percolation {
      * is site (row, col) open?
      */
     public boolean isOpen(int row, int col) {
-        int site = findSite(row, col);
-        validate(site);
-        return sites[site-1];
+        if (row < 1 || row > n || col < 1 || col > n)
+            throw new IllegalArgumentException("row or column is not between 1 and " + n);
+        return sites[xyTo1D(row, col)];
     }
 
     /**
      * is site (row, col) full?
      */
     public boolean isFull(int row, int col) {
-        return isOpen(row, col) && uf.connected(top, findSite(row, col));
+        return isOpen(row, col) && uf.connected(top, xyTo1D(row, col));
     }
 
     /**
@@ -89,25 +85,20 @@ public class Percolation {
      * does the system percolate?
      */
     public boolean percolates() {
-        return uf.connected(top, bottom);
+        return openSites > 0 && uf.connected(top, bottom);
     }
 
-    private boolean isRowOrColumnValid(int[] nextPos, int row, int col) {
-        int nextSite = findSite(nextPos[0], nextPos[1]);
-
-        int r = nextSite % n;
-        int nextRow = r + 1;
-        int nextCol = n - r;
-
-        return row == nextRow || col == nextCol;
+    private boolean validate(int nextRow, int nextCol, int row, int col) {
+        if (nextRow < 1 || nextCol < 1 || nextRow > n || nextCol > n)
+            return false;
+        else if (nextCol > col && col == n)
+            return false;
+        else if (nextRow > row && row == n)
+            return false;
+        return true;
     }
 
-    private int findSite(int row, int col) {
-        return (row - 1) * n + (col - 1) + 1;
-    }
-
-    private void validate(int s) {
-        if (s < 1 || s > n * n)
-            throw new IllegalArgumentException("site " + s + " is not between 0 and " + n);
+    private int xyTo1D(int row, int col) {
+        return (row - 1) * n + (col - 1);
     }
 }
