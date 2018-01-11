@@ -1,7 +1,7 @@
-/******************************************************************************
- *  Compilation:  javac PercolationVisualizer.java
- *  Execution:    java PercolationVisualizer input.txt
- *  Dependencies: Percolation.java
+package percolation; /******************************************************************************
+ *  Compilation:  javac percolation.PercolationVisualizer.java
+ *  Execution:    java percolation.PercolationVisualizer input.txt
+ *  Dependencies: percolation.Percolation.java
  *
  *  This program takes the name of a file as a command-line argument.
  *  From that file, it
@@ -20,6 +20,7 @@ import java.awt.Font;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
+import percolation.Percolation;
 
 public class PercolationVisualizer {
 

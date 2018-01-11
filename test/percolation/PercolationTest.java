@@ -1,5 +1,8 @@
+package percolation;
+
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import percolation.Percolation;
 
 class PercolationTest {
 
