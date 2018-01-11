@@ -8,29 +8,25 @@ public class Percolation {
      * create n-by-n grid, with all sites blocked
      * n specifies n by n grid
      */
-    private final WeightedQuickUnionUF uf;
-    private final int n, top, bottom;
+    private static final byte OPEN = 1;
+    private static final byte TOP = 2;
+    private static final byte BOTTOM = 4;
 
-    private boolean[] sites;
+    private final WeightedQuickUnionUF uf;
+    private final int n;
+
+    private byte[] sites;
+    private boolean isPercolate = false;
     private int openSites = 0;
 
     public Percolation(int n) {
         if (n < 1)
             throw new IllegalArgumentException("n " + n + " is less than 1");
 
-        sites = new boolean[n * n];
+        sites = new byte[n * n];
         uf = new WeightedQuickUnionUF(n * n);
 
         this.n = n;
-        top = 0;
-        bottom = n * n - 1;
-
-        // IntStream.range(0, n).forEach(q -> uf.union(top, q));
-        for (int q = 0; q < n; q++)
-            uf.union(top, q);
-        // IntStream.range(n * n - n, n * n).forEach(q -> uf.union(bottom, q));
-        for (int q = bottom; q > bottom - n; q--)
-            uf.union(bottom, q);
     }
 
     /**
@@ -38,23 +34,47 @@ public class Percolation {
      */
     public void open(int row, int col) {
         if (!isOpen(row, col)) {
-            int currPos = xyTo1D(row, col);
-            sites[currPos] = true;
+            int current = xyTo1D(row, col);
+            byte currentStatus = getStatus(current);
+            sites[current] = OPEN;
             openSites++;
 
-            int left = xyTo1D(row, col - 1);
-            int right = xyTo1D(row, col + 1);
-            int up = xyTo1D(row - 1, col);
-            int down = xyTo1D(row + 1, col);
+            if (validate(row, col - 1, row, col) && isOpen(row, col - 1)) { // left
+                int left = xyTo1D(row, col - 1);
+                byte leftStatus = getStatus(left);
+                uf.union(current, left);
+                sites[uf.find(current)] |= leftStatus | currentStatus;
+                currentStatus = getStatus(current);
+            }
+            if (validate(row, col + 1, row, col) && isOpen(row, col + 1)) { // right
+                int right = xyTo1D(row, col + 1);
+                byte rightStatus = getStatus(right);
+                uf.union(current, right);
+                sites[uf.find(current)] |= rightStatus | currentStatus;
+                currentStatus = getStatus(current);
+            }
+            if (validate(row -1, col, row, col) && isOpen(row - 1, col)) { // up
+                int up = xyTo1D(row - 1, col);
+                byte upStatus = getStatus(up);
+                uf.union(current, up);
+                sites[uf.find(current)] |= upStatus | currentStatus;
+                currentStatus = getStatus(current);
+            }
+            if (validate(row + 1, col, row, col) && isOpen(row + 1, col)) { // down
+                int down = xyTo1D(row + 1, col);
+                byte downStatus = getStatus(down);
+                uf.union(current, down);
+                sites[uf.find(current)] |= downStatus | currentStatus;
+                currentStatus = getStatus(current);
+            }
 
-            if (validate(row, col - 1, row, col) && sites[left]) // left
-                uf.union(currPos, left);
-            if (validate(row, col + 1, row, col) && sites[right]) // right
-                uf.union(currPos, right);
-            if (validate(row -1, col, row, col) && sites[up]) // up
-                uf.union(currPos, up);
-            if (validate(row + 1, col, row, col) && sites[down]) // down
-                uf.union(currPos, down);
+            if (row == 1)
+                sites[uf.find(current)] |= TOP | currentStatus;
+            if (row == n)
+                sites[uf.find(current)] |= BOTTOM | currentStatus;
+
+            if ((sites[uf.find(current)] & (TOP | BOTTOM)) == (TOP | BOTTOM))
+                isPercolate = true;
         }
     }
 
@@ -64,14 +84,14 @@ public class Percolation {
     public boolean isOpen(int row, int col) {
         if (row < 1 || row > n || col < 1 || col > n)
             throw new IllegalArgumentException("row or column is not between 1 and " + n);
-        return sites[xyTo1D(row, col)];
+        return (sites[xyTo1D(row, col)] & OPEN) == OPEN;
     }
 
     /**
      * is site (row, col) full?
      */
     public boolean isFull(int row, int col) {
-        return isOpen(row, col) && uf.connected(top, xyTo1D(row, col));
+        return isOpen(row, col) && (sites[uf.find(xyTo1D(row, col))] & TOP) == TOP;
     }
 
     /**
@@ -85,7 +105,7 @@ public class Percolation {
      * does the system percolate?
      */
     public boolean percolates() {
-        return openSites > 0 && uf.connected(top, bottom);
+        return openSites > 0 && isPercolate;
     }
 
     private boolean validate(int nextRow, int nextCol, int row, int col) {
@@ -100,5 +120,10 @@ public class Percolation {
 
     private int xyTo1D(int row, int col) {
         return (row - 1) * n + (col - 1);
+    }
+
+    private byte getStatus(int p) {
+        int root = uf.find(p);
+        return sites[root];
     }
 }
