@@ -3,6 +3,7 @@ package percolation;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
+import edu.princeton.cs.algs4.Stopwatch;
 
 public class PercolationStats {
     private static final double CONFIDENCE_95 = 1.96;
@@ -50,10 +51,16 @@ public class PercolationStats {
     public static void main(String[] args) { // test client, described below
         int n = Integer.parseInt(args[0]); // n-by-n percolation system
         int t = Integer.parseInt(args[1]); // t computational experiments
+
+        Stopwatch stopwatch = new Stopwatch();
         PercolationStats percTest = new PercolationStats(n, t);
+        double elapsedTime = stopwatch.elapsedTime();
+
+
         StdOut.println("mean = " + percTest.mean());
         StdOut.println("stddev = " + percTest.stddev());
         StdOut.println("95% confidence interval = [" + percTest.confidenceLo()
                 + ", " + percTest.confidenceHi() + "]");
+        StdOut.println("Execution time for T=" + t + " and N=" + n + " took " + elapsedTime + "s");
     }
 }

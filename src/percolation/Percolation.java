@@ -1,9 +1,8 @@
 package percolation;
 
+import edu.princeton.cs.algs4.QuickFindUF;
+import edu.princeton.cs.algs4.QuickUnionUF;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
-
-// import java.util.Arrays;
-// import java.util.stream.IntStream;
 
 public class Percolation {
     /**
@@ -14,7 +13,9 @@ public class Percolation {
     private static final byte TOP = 2;
     private static final byte BOTTOM = 4;
 
+    // private final QuickFindUF uf;
     private final WeightedQuickUnionUF uf;
+
     private final int n;
 
     private byte[] sites;
@@ -26,6 +27,8 @@ public class Percolation {
             throw new IllegalArgumentException("n " + n + " is less than 1");
 
         sites = new byte[n * n];
+        // uf = new QuickFindUF(n * n);
+        // uf = new QuickUnionUF(n * n);
         uf = new WeightedQuickUnionUF(n * n);
 
         this.n = n;
