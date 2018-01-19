@@ -1,5 +1,7 @@
 package queues;
 
+import java.util.Iterator;
+
 public class Deque<Item> implements Iterable<Item> {
 
     // construct an empty deque
