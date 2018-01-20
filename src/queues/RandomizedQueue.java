@@ -11,12 +11,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // is the randomized queue empty?
     public boolean isEmpty() {
-
+        return true;
     }
 
     // return the number of items on the randomized queue
     public int size() {
-
+        return 0;
     }
 
     // add the item
@@ -25,7 +25,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     // remove and return a random item
-    public Item dequeue() {
+    /*public Item dequeue() {
 
     }
 
@@ -38,9 +38,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public Iterator<Item> iterator() {
 
     }
-
+*/
     // unit testing (optional)
     public static void main(String[] args) {
 
+    }
+
+    @Override
+    public Iterator<Item> iterator() {
+        return null;
     }
 }
