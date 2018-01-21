@@ -9,6 +9,19 @@ import java.util.NoSuchElementException;
 class DequeTest {
 
     @Test
+    void test_check_size() {
+        Deque<String> deque = new Deque<>();
+        assertEquals(0, deque.size());
+        deque.addFirst("a");
+        assertEquals(1, deque.size());
+        deque.addFirst("a");
+        assertEquals(2, deque.size());
+        deque.removeFirst();
+        deque.removeLast();
+        assertEquals(0, deque.size());
+    }
+
+    @Test
     void test_addFirst_removeLast_sequence() {
         Deque<String> deque = new Deque<>();
         deque.addFirst("a");
