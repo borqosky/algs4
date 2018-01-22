@@ -22,6 +22,18 @@ class DequeTest {
     }
 
     @Test
+    void test_addFirst_addFirst_isEmpty_sequence() {
+        Deque<Integer> deque = new Deque<>();
+        assertTrue(deque.isEmpty());
+        deque.addFirst(1);
+        assertFalse(deque.isEmpty());
+        assertEquals(Integer.valueOf(1), deque.removeFirst());
+        deque.addFirst(4);
+        assertEquals(Integer.valueOf(4), deque.removeFirst());
+        assertTrue(deque.isEmpty());
+    }
+
+    @Test
     void test_addFirst_removeLast_sequence() {
         Deque<String> deque = new Deque<>();
         deque.addFirst("a");
@@ -94,5 +106,49 @@ class DequeTest {
 
         assertEquals(true, iterator2.hasNext());
         assertEquals(Integer.valueOf(3), iterator2.next());
+    }
+
+    @Test
+    void test_randomized_queue_is_empty() {
+        RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<>();
+        assertEquals(true, randomizedQueue.isEmpty());
+    }
+
+    @Test
+    void test_enqueue_dequeue() {
+        RandomizedQueue<Integer> rq = new RandomizedQueue<>();
+        rq.enqueue(347);
+        rq.enqueue(120);
+        rq.enqueue(333);
+        assertFalse(rq.isEmpty());
+        rq.dequeue();
+        rq.dequeue();
+    }
+
+    @Test
+    void test_randomized_queue_is_not_empty_empty() {
+        RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<>();
+        randomizedQueue.enqueue(1);
+        assertEquals(false, randomizedQueue.isEmpty());
+        assertEquals(Integer.valueOf(1), randomizedQueue.dequeue());
+        assertEquals(true, randomizedQueue.isEmpty());
+    }
+
+    @Test
+    void test_randomized_queue_iterators() {
+        RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<>();
+        randomizedQueue.enqueue(1);
+        randomizedQueue.enqueue(2);
+        randomizedQueue.enqueue(3);
+
+        Iterator<Integer> integerIterator1 = randomizedQueue.iterator();
+        Iterator<Integer> integerIterator2 = randomizedQueue.iterator();
+
+        integerIterator1.next();
+        integerIterator1.next();
+        integerIterator1.next();
+
+        assertFalse(integerIterator1.hasNext());
+        assertTrue(integerIterator2.hasNext());
     }
 }

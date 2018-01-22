@@ -88,8 +88,10 @@ public class Deque<Item> implements Iterable<Item> {
 
         n--;
 
-        if (n == 0)
-            first = last;
+        if (n == 0) {
+            first = null;
+            last = null;
+        }
 
         return oldFirst.item;
     }
