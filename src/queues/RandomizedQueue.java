@@ -89,7 +89,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                 if (a[i] != null)
                     temp[i] = a[i];
             }
-
             StdRandom.shuffle(temp);
         }
 
