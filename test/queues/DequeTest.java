@@ -95,4 +95,32 @@ class DequeTest {
         assertEquals(true, iterator2.hasNext());
         assertEquals(Integer.valueOf(3), iterator2.next());
     }
+
+    @Test
+    void test_randomized_queue_is_empty() {
+        RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<>();
+        assertEquals(true, randomizedQueue.isEmpty());
+    }
+
+    @Test
+    void test_randomized_queue_is_not_empty_empty() {
+        RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<>();
+        randomizedQueue.enqueue(1);
+        assertEquals(false, randomizedQueue.isEmpty());
+        assertEquals(Integer.valueOf(1), randomizedQueue.dequeue());
+        assertEquals(true, randomizedQueue.isEmpty());
+    }
+
+    @Test
+    void test_randomized_queue_order() {
+        RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<>();
+        randomizedQueue.enqueue(1);
+        randomizedQueue.enqueue(2);
+        randomizedQueue.enqueue(3);
+
+        Iterator<Integer> integerIterator1 = randomizedQueue.iterator();
+        Iterator<Integer> integerIterator2 = randomizedQueue.iterator();
+
+        assertNotEquals(integerIterator1.next(), integerIterator2.next());
+    }
 }

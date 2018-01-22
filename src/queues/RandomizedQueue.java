@@ -50,7 +50,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         int r;
         do {
             r = StdRandom.uniform(a.length);
-        } while (a[r] != null);
+        } while (a[r] == null);
 
         Item item = a[r];
         a[r] = null;
