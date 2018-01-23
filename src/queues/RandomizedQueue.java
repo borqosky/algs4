@@ -24,7 +24,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         assert  capacity >= n;
         Item[] temp = (Item[]) new Object[capacity];
         for (int i = 0; i < a.length; i++)
-            temp[i] = a[i];
+            if (a[i] != null)
+                temp[i] = a[i];
         a = temp;
     }
 
