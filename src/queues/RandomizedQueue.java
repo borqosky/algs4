@@ -22,10 +22,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private void resize(int capacity) {
         assert  capacity >= n;
+        int t = 0;
         Item[] temp = (Item[]) new Object[capacity];
         for (int i = 0; i < a.length; i++)
-            if (a[i] != null)
-                temp[i] = a[i];
+            if (a[i] != null) {
+                temp[t++] = a[i];
+            }
         a = temp;
     }
 
