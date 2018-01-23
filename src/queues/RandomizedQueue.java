@@ -50,14 +50,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty())
             throw new NoSuchElementException("can't dequeue from empty queue.");
 
-        int r;
-        do {
-            r = StdRandom.uniform(a.length);
-        } while (a[r] == null);
-
+        int r = StdRandom.uniform(a.length);
         Item item = a[r];
-        a[r] = null;
+        a[r] = a[n - 1];
+        a[n - 1] = null;
         n--;
+
         if (n > 0 && n == a.length / 4) resize(a.length / 2);
 
         return item;
@@ -68,11 +66,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty())
             throw new NoSuchElementException("can't sample from empty queue.");
 
-        int r;
-        do {
-            r = StdRandom.uniform(a.length);
-        } while (a[r] != null);
-
+        int r = StdRandom.uniform(a.length);
         return a[r];
     }
 
