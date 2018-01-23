@@ -1,4 +1,4 @@
-package queues;
+// package queues;
 
 import edu.princeton.cs.algs4.StdRandom;
 
@@ -50,7 +50,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty())
             throw new NoSuchElementException("can't dequeue from empty queue.");
 
-        int r = StdRandom.uniform(a.length);
+        int r = StdRandom.uniform(n);
         Item item = a[r];
         a[r] = a[n - 1];
         a[n - 1] = null;
@@ -66,7 +66,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty())
             throw new NoSuchElementException("can't sample from empty queue.");
 
-        int r = StdRandom.uniform(a.length);
+        int r = StdRandom.uniform(n);
         return a[r];
     }
 
@@ -77,11 +77,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private class RandomizedQueueIterator implements Iterator<Item> {
         private int i;
-        private Item[] temp;
+        private final Item[] temp;
 
         public RandomizedQueueIterator() {
             i = n - 1;
-            temp = (Item[]) new Object[a.length];
+            temp = (Item[]) new Object[n];
             for (int i = 0; i < a.length; i++) {
                 if (a[i] != null)
                     temp[i] = a[i];
@@ -106,8 +106,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
     }
 
-    // unit testing (optional)
     public static void main(String[] args) {
-
+        // unit testing (optional)
     }
 }
