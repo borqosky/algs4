@@ -135,6 +135,17 @@ class DequeTest {
     }
 
     @Test
+    void test_deque_random_size() {
+        for (int i = 0; i < 1000; i++) {
+            RandomizedQueue<Integer> rq = new RandomizedQueue<>();
+            assertEquals(0, rq.size());
+            assertTrue(rq.isEmpty());
+            rq.enqueue(369);
+            rq.dequeue();
+        }
+    }
+
+    @Test
     void test_randomized_queue_iterators() {
         RandomizedQueue<Integer> randomizedQueue = new RandomizedQueue<>();
         randomizedQueue.enqueue(1);
