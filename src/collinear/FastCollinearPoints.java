@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class FastCollinearPoints {
     private  int n;
     private List<LineSegment> lineSegments;
@@ -16,17 +17,39 @@ public class FastCollinearPoints {
         if (points == null)
             throw new IllegalArgumentException();
 
-        n = 0;
+        Point[] sortedPoints = new Point[points.length];
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null)
+                throw new IllegalArgumentException();
+            sortedPoints[i] = points[i];
+        }
+
         lineSegments = new ArrayList<>();
-
-        Arrays.sort(points, points[0].slopeOrder());
-
-        int c = 1;
-        for (int p = 0; p < points.length - 3; p++) {
-            while (points[p] == points[c])
-                c++;
-            if (c >= 3)
-                lineSegments.add(new LineSegment(points[p], points[c]));
+        for (Point point : points) {
+            int lo = 1;
+            int hi = 1;
+            Arrays.sort(sortedPoints, point.slopeOrder());
+            double slope = Double.NEGATIVE_INFINITY;
+            for (int i = 1; i < sortedPoints.length; i++) {
+                Point nextPoint = sortedPoints[i];
+                if (point.slopeTo(nextPoint) == Double.NEGATIVE_INFINITY)
+                    throw new IllegalArgumentException();
+                else if (point.slopeTo(nextPoint) == slope)
+                    hi++;
+                else {
+                    slope = point.slopeTo(sortedPoints[i]);
+                    if (hi - lo >= 2) {
+                        Point[] sp = Arrays.copyOfRange(sortedPoints, lo - 1, hi + 1);
+                        sp[0] = point;
+                        Arrays.sort(sp);
+                        if (sp[0].equals(point) && sp.length > 3) {
+                            lineSegments.add(new LineSegment(sp[0], sp[sp.length - 1]));
+                            n++;
+                        }
+                    }
+                    lo = hi = i;
+                }
+            }
         }
     }
 
