@@ -4,13 +4,11 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.Comparator;
 import java.util.Stack;
 import java.util.Collections;
 
 
-public class Solver {
-    private Node current;
+public class Solver { private Node current;
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board board) {
@@ -20,46 +18,28 @@ public class Solver {
         MinPQ<Node> boardMinPQ = new MinPQ<>();
         MinPQ<Node> twinMinPQ = new MinPQ<>();
 
-        int i = 1;
-        int[][] s = new int[board.dimension()][board.dimension()];
-        for (int r = 0; r < s.length; r++) {
-            for (int c = 0; c < s[r].length; c++) {
-                s[r][c] = i++;
-            }
-        }
-        s[s.length-1][s.length-1] = 0;
+        boardMinPQ.insert(new Node(board, null));
+        twinMinPQ.insert(new Node(board.twin(), null));
 
-        Board search = new Board(s);
-
-        current = new Node(board, null);
-        boardMinPQ.insert(current);
-
-        Node twin = new Node(board.twin(), null);
-        twinMinPQ.insert(twin);
-
-        while (!current.board.equals(search) && !twin.board.equals(search)) {
-            for (Board b : current.board.neighbors()) {
-                if (current.moves > 0) {
-                    Node node = new Node(b, current);
-                    boardMinPQ.insert(node);
-                } else {
-                    Node node = new Node(b, current);
-                    boardMinPQ.insert(node);
-                }
-            }
+        while (!boardMinPQ.min().board.isGoal() && !twinMinPQ.min().board.isGoal()) {
             current = boardMinPQ.delMin();
+            Node twin = twinMinPQ.delMin();
+
+            for (Board b : current.board.neighbors()) {
+                if (current.moves > 0 && !b.equals(current.previous.board))
+                    boardMinPQ.insert(new Node(b, current));
+                else if (current.moves == 0)
+                    boardMinPQ.insert(new Node(b, current));
+            }
 
             for (Board b : twin.board.neighbors()) {
-                if (twin.moves > 0) {
-                    Node node = new Node(b, twin);
-                    twinMinPQ.insert(node);
-                } else {
-                    Node node = new Node(b, twin);
-                    twinMinPQ.insert(node);
-                }
+                if (twin.moves > 0 && !b.equals(twin.previous.board))
+                    twinMinPQ.insert(new Node(b, twin));
+                else if (current.moves == 0)
+                    twinMinPQ.insert(new Node(b, twin));
             }
-            twin = twinMinPQ.delMin();
         }
+        current = boardMinPQ.delMin();
 }
 
     // is the initial board solvable?
@@ -78,10 +58,10 @@ public class Solver {
         if (!isSolvable()) return null;
         Stack<Board> boards = new Stack<>();
 
-        Node current = new Node(this.current.board, this.current.previous);
-        while (current != null) {
-            boards.push(current.board);
-            current = current.previous;
+        Node temp = new Node(this.current.board, this.current.previous);
+        while (temp != null) {
+            boards.push(temp.board);
+            temp = temp.previous;
         }
         Collections.reverse(boards);
         return boards;
@@ -94,19 +74,18 @@ public class Solver {
         int moves;
         int priority;
 
-
-        Node (Board initial, Node _previous) {
+        Node (Board initial, Node prev) {
             board = initial;
             previous = null;
-            this.previous = _previous;
+            this.previous = prev;
             this.moves = (previous == null) ? 0 : previous.moves + 1;
             this.manhattan = board.manhattan();
-            priority = manhattan + priority;
+            priority = manhattan + moves;
         }
 
         @Override
         public int compareTo(Node that) {
-            return (this.priority - that.priority);
+            return this.priority - that.priority;
         }
     }
 

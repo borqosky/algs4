@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public class Board {
     private int[] emptyBlockPos;  // horizontal and vertical positions
-    private int[][] board;
+    final private int[][] board;
 
     // construct a board from an n-by-n array of blocks
     // (where blocks[i][j] = block in row i, column j)
@@ -61,7 +61,17 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-        return manhattan() == 0;
+        int i = 1;
+        int[][] s = new int[dimension()][dimension()];
+        for (int r = 0; r < s.length; r++) {
+            for (int c = 0; c < s[r].length; c++) {
+                s[r][c] = i++;
+            }
+        }
+        s[s.length-1][s.length-1] = 0;
+        Board search = new Board(s);
+
+        return this.equals(search);
     }
 
     // a board that is obtained by exchanging any pair of blocks
