@@ -1,4 +1,4 @@
-// package kdtree;
+package kdtree;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
@@ -80,7 +80,7 @@ public class KdTree {
 
     private boolean contains(Node x, Point2D p, boolean orientation) {
         if (x == null) return false;
-
+        if (!x.rect.contains(p)) return false;
         if (x.p.equals(p)) return true;
 
         double cmp;
